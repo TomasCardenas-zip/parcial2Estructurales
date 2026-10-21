@@ -1,28 +1,23 @@
 package service;
 
-public class PagoAndinoAdapter implements PasarelaPago {
-    private final PagoAndinoAPI api;
 
-    public PagoAndinoAdapter(PagoAndinoAPI api) {
-        this.api = api;
+public class PagoAndinoAdapter implements PasarelaPago {
+    private final PagoAndinoAPI apiExterna;
+
+    public PagoAndinoAdapter(PagoAndinoAPI apiExterna) {
+        this.apiExterna = apiExterna;
     }
 
     @Override
-    public ResultadoPago procesarPago(String numeroTarjeta, double valorPesos, String referencia) {
-        long valorCentavos = (long) Math.round(valorPesos * 100.0);
-        int codigoRespuesta = api.procesarCobro(numeroTarjeta, valorCentavos, referencia);
+    public ResultadoPago procesarPago(double monto, String numeroTarjeta) {
+        long montoCentavos = Math.round(monto * 100);
+        // Llamada con exactamente 2 argumentos:
+        int codigoRespuesta = apiExterna.procesarCobro(montoCentavos, numeroTarjeta);
 
         if (codigoRespuesta == 0) {
-            return new ResultadoPago(true, api.ultimaAutorizacion(), "Pago aprobado exitosamente");
+            return new ResultadoPago(true, "Pago aprobado por PagoAndino.");
+        } else {
+            return new ResultadoPago(false, "Transacción rechazada por la pasarela.");
         }
-
-        String motivo;
-        switch (codigoRespuesta) {
-            case 51 -> motivo = "Fondos insuficientes";
-            case 14 -> motivo = "Tarjeta inválida";
-            case 91 -> motivo = "Pasarela no disponible";
-            default -> motivo = "Error desconocido de pasarela (Código: " + codigoRespuesta + ")";
-        }
-        return new ResultadoPago(false, null, motivo);
     }
 }

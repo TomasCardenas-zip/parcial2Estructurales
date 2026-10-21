@@ -3,47 +3,56 @@ package model;
 import java.time.LocalDate;
 
 public class Reserva {
-    private int numeroReserva;
-    private final Cliente cliente;
-    private final ProductoTuristico producto;
-    private final LocalDate fechaViaje;
-    private final int numViajeros;
-    private final Guia guia;
-    private final boolean incluyeTransporte;
-    private final boolean incluyeSeguro;
-    private final String observaciones;
-    private String estado;
+    private static int contadorConsecutivo = 1;
 
-    public Reserva(ReservaBuilder builder) {
-        this.cliente = builder.cliente;
-        this.producto = builder.producto;
-        this.fechaViaje = builder.fechaViaje;
-        this.numViajeros = builder.numViajeros;
-        this.guia = builder.guia;
-        this.incluyeTransporte = builder.incluyeTransporte;
-        this.incluyeSeguro = builder.incluyeSeguro;
-        this.observaciones = builder.observaciones;
+    private final int consecutivo;
+    private Cliente cliente;
+    private ProductoTuristico producto;
+    private LocalDate fechaViaje;
+    private int numViajeros;
+    private Guia guia;
+    private boolean incluyeTransporte;
+    private boolean incluyeSeguro;
+    private String observaciones;
+    private String estado; // "PENDIENTE", "CONFIRMADA", "CANCELADA"
+
+    public Reserva(Cliente cliente, ProductoTuristico producto, LocalDate fechaViaje,
+                   int numViajeros, Guia guia, boolean incluyeTransporte,
+                   boolean incluyeSeguro, String observaciones) {
+        this.consecutivo = contadorConsecutivo++;
+        this.cliente = cliente;
+        this.producto = producto;
+        this.fechaViaje = fechaViaje;
+        this.numViajeros = numViajeros;
+        this.guia = guia;
+        this.incluyeTransporte = incluyeTransporte;
+        this.incluyeSeguro = incluyeSeguro;
+        this.observaciones = observaciones;
         this.estado = "PENDIENTE";
     }
 
-    public double calcularValorTotal() {
-        double subtotalProducto = producto.getPrecioPorPersona() * numViajeros;
-
-        double costoGuia = 0.0;
-        if (guia != null) {
-            int duracionTotal = producto.getDuracionHoras();
-            int diasGuia = (int) Math.ceil((double) duracionTotal / 8.0);
-            costoGuia = diasGuia * guia.getTarifaPorDia();
-        }
-
-        double costoTransporte = incluyeTransporte ? (35000.0 * numViajeros) : 0.0;
-        double costoSeguro = incluyeSeguro ? (15000.0 * numViajeros) : 0.0;
-
-        return subtotalProducto + costoGuia + costoTransporte + costoSeguro;
+    public Reserva(ReservaBuilder reservaBuilder) {
+        consecutivo = 0;
     }
 
-    public int getNumeroReserva() { return numeroReserva; }
-    public void setNumeroReserva(int numeroReserva) { this.numeroReserva = numeroReserva; }
+    public int getNumeroReserva() {
+        return consecutivo;
+    }
+
+    public double calcularValorTotal() {
+        double valor = producto.getPrecioPorPersona() * numViajeros;
+        if (incluyeTransporte) valor += (35000.0 * numViajeros);
+        if (incluyeSeguro) valor += (15000.0 * numViajeros);
+        if (guia != null) {
+            int diasGuia = (int) Math.ceil(producto.getDuracionHoras() / 8.0);
+            valor += (guia.getTarifaPorDia() * diasGuia);
+        }
+        return valor;
+    }
+
+    public int getConsecutivo() {
+        return consecutivo;
+    }
     public Cliente getCliente() { return cliente; }
     public ProductoTuristico getProducto() { return producto; }
     public LocalDate getFechaViaje() { return fechaViaje; }

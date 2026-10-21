@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="controller.ReservaViewController"
+         tabClosingPolicy="UNAVAILABLE" prefWidth="850.0" prefHeight="650.0"
+         style="-fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;">
+    <tabs>
+        <!-- PESTAÑA 1: NUEVA RESERVA -->
+        <Tab text="🌿 Nueva Reserva y Emisión">
+            <content>
+                <VBox spacing="15.0">
+                    <padding>
+                        <Insets top="15.0" right="20.0" bottom="15.0" left="20.0"/>
+                    </padding>
+                    <children>
+                        <!-- ENCABEZADO -->
+                        <HBox style="-fx-background-color: #1b5e20; -fx-padding: 12px; -fx-background-radius: 6px;" alignment="CENTER_LEFT">
+                            <children>
+                                <VBox>
+                                    <Label text="AGENCIA DE VIAJES RUTAVERDE QUINDÍO" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+                                    <Label text="Sistema de Gestión de Reservas | RNT: 894521 | NIT: 900.123.456-7" style="-fx-text-fill: #e8f5e9; -fx-font-size: 11px;"/>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <GridPane hgap="12.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="cbClientes" prefWidth="250.0" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                <Label text="Producto Turístico:" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="cbProductos" prefWidth="250.0" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                                <Label text="Fecha de Viaje:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="dpFecha" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                <Label text="Número de Viajeros:" GridPane.rowIndex="1" GridPane.columnIndex="2" style="-fx-font-weight: bold;"/>
+                                <TextField fx:id="txtViajeros" text="2" prefWidth="100.0" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                                <Label text="Guía Opcional:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <ComboBox fx:id="cbGuias" prefWidth="250.0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <Label text="Canal de Emisión:" GridPane.rowIndex="2" GridPane.columnIndex="2" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="cbCanal" prefWidth="250.0" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+                                <HBox spacing="15.0" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                                    <children>
+                                        <CheckBox fx:id="chkTransporte" text="Transporte ($35.000/p)"/>
+                                        <CheckBox fx:id="chkSeguro" text="Seguro de Viaje ($15.000/p)"/>
+                                    </children>
+                                </HBox>
+
+                                <Label text="Observaciones:" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                                <TextField fx:id="txtObservaciones" promptText="Alergias, movilidad..." GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+                                <Label text="Tarjeta de Crédito:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                                <TextField fx:id="txtTarjeta" text="4539148803436467" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                                <Label fx:id="lblPrecioEstimado" text="Total Estimado: $0" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            </children>
+                        </GridPane>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <children>
+                                <Button text="Confirmar, Cobrar y Emitir Voucher" onAction="#onConfirmarReserva"
+                                        style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8px 18px; -fx-font-size: 13px; -fx-cursor: hand;"/>
+                            </children>
+                        </HBox>
+
+                        <Label text="Comprobante / Voucher Emitido:" style="-fx-font-weight: bold;"/>
+                        <TextArea fx:id="txtVoucher" editable="false" prefHeight="180.0"
+                                  style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 12px;"/>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+
+        <!-- PESTAÑA 2: TABLA DE RESERVAS -->
+        <Tab text="📋 Reservas Registradas">
+            <content>
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="15.0" right="20.0" bottom="15.0" left="20.0"/>
+                    </padding>
+                    <children>
+                        <Label text="Historial de Reservas Confirmadas en el Sistema" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                        <TableView fx:id="tablaReservas" prefHeight="480.0">
+                            <columns>
+                                <TableColumn fx:id="colConsecutivo" text="Consecutivo" prefWidth="90.0"/>
+                                <TableColumn fx:id="colCliente" text="Cliente" prefWidth="160.0"/>
+                                <TableColumn fx:id="colProducto" text="Producto" prefWidth="180.0"/>
+                                <TableColumn fx:id="colFecha" text="Fecha Viaje" prefWidth="100.0"/>
+                                <TableColumn fx:id="colViajeros" text="Viajeros" prefWidth="70.0"/>
+                                <TableColumn fx:id="colTotal" text="Valor Total" prefWidth="120.0"/>
+                                <TableColumn fx:id="colEstado" text="Estado" prefWidth="100.0"/>
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+
+        <!-- PESTAÑA 3: REPORTES FINANCIEROS Y KPIS -->
+        <Tab text="📊 Reportes de Gestión">
+            <content>
+                <VBox spacing="20.0">
+                    <padding>
+                        <Insets top="20.0" right="25.0" bottom="20.0" left="25.0"/>
+                    </padding>
+                    <children>
+                        <Label text="Informe de Gestión e Ingresos Financieros" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="Fecha Inicial:"/>
+                                <DatePicker fx:id="dpInicio"/>
+                                <Label text="Fecha Final:"/>
+                                <DatePicker fx:id="dpFin"/>
+                                <Button text="Calcular Periodo" onAction="#onGenerarReporte"
+                                        style="-fx-background-color: #1565c0; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                            </children>
+                        </HBox>
+
+                        <Separator/>
+
+                        <GridPane hgap="20.0" vgap="15.0">
+                            <children>
+                                <!-- Tarjeta KPI 1 -->
+                                <VBox spacing="5.0" style="-fx-background-color: #e8f5e9; -fx-padding: 15px; -fx-background-radius: 8px; -fx-border-color: #a5d6a7; -fx-border-radius: 8px;"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="0" prefWidth="380.0">
+                                    <children>
+                                        <Label text="INGRESOS TOTALES EN EL PERIODO" style="-fx-font-size: 12px; -fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                                        <Label fx:id="lblIngresos" text="0.00" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1b5e20;"/>
+                                    </children>
+                                </VBox>
+
+                                <!-- Tarjeta KPI 2 -->
+                                <VBox spacing="5.0" style="-fx-background-color: #e3f2fd; -fx-padding: 15px; -fx-background-radius: 8px; -fx-border-color: #90caf9; -fx-border-radius: 8px;"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="380.0">
+                                    <children>
+                                        <Label text="PRODUCTO MÁS SOLICITADO (MÁS VIAJEROS)" style="-fx-font-size: 12px; -fx-text-fill: #1565c0; -fx-font-weight: bold;"/>
+                                        <Label fx:id="lblPopular" text="Ninguno registrado" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0d47a1;"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>

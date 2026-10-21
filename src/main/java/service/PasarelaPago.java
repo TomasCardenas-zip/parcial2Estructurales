@@ -1,5 +1,5 @@
 package service;
 
 public interface PasarelaPago {
-    ResultadoPago procesarPago(String numeroTarjeta, double valorPesos, String referencia);
+    ResultadoPago procesarPago(double monto, String numeroTarjeta);
 }

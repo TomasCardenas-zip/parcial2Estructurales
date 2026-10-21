@@ -20,6 +20,10 @@ public abstract class ProductoTuristico {
     public abstract List<Actividad> getActividades();
     public abstract boolean tieneActividadSuspendida();
 
+    public double getPrecio() {
+        return getPrecioPorPersona();
+    }
+
     @Override
     public String toString() {
         return nombre + " (" + codigo + ")";
